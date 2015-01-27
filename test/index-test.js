@@ -10,7 +10,7 @@ var vogels = require('../index'),
 
 chai.should();
 
-describe('vogels', function () {
+describe('vogels without alias', function () {
 
   afterEach(function () {
     vogels.reset();

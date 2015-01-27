@@ -27,8 +27,8 @@ exports.mockDynamoDB = function () {
 };
 
 exports.realDynamoDB = function () {
-  var opts = { endpoint : 'http://dynamodb-local:8000', apiVersion: '2012-08-10' };
-  return new AWS.DynamoDB(opts);
+  AWS.config.update({accessKeyId: 'cUniqueSessionID', secretAccessKey: 'secret', endpoint : new AWS.Endpoint('http://localhost:8000'), apiVersion: '2012-08-10',region: 'us-west-2'});
+  return new AWS.DynamoDB();
 };
 
 exports.mockDocClient = function () {

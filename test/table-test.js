@@ -1657,4 +1657,3 @@ describe('table', function () {
     });
   });
 });
-
