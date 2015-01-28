@@ -80,7 +80,7 @@ describe('Vogels Integration Tests', function() {
       hashKey : 'id',
       schema : {
         id            : Joi.string().required().default(uuid.v4),
-        email         : Joi.string().required(),
+        email         : Joi.string().optional(),
         name          : Joi.string(),
         age           : Joi.number().min(10),
         roles         : vogels.types.stringSet().default(['user']),
