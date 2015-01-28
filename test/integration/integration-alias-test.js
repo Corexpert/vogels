@@ -384,11 +384,9 @@ describe('Vogels Integration Tests', function() {
         return done();
       });
     });
-
-
   });
 
-  /*describe('#update', function () {
+  describe('#update', function () {
     it('should update item appended role', function(done) {
       User.update({
         id : '123456789',
@@ -479,7 +477,7 @@ describe('Vogels Integration Tests', function() {
 
   });
 
-  describe('#getItems', function () {
+  /*describe('#getItems', function () {
     it('should return 3 items', function(done) {
       User.getItems(['userid-1', 'userid-2', 'userid-3'], function (err, accounts) {
         expect(err).to.not.exist;
