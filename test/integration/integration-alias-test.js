@@ -412,10 +412,11 @@ describe('Vogels Integration Tests', function() {
     });
 
     it('should update User using updateExpression', function(done) {
+      //TODO allow to use alias
       var params = {};
-      params.UpdateExpression = 'ADD #a :x SET things[0].buz = :y';
+      params.UpdateExpression = 'ADD #a :x SET t[0].buz = :y';
       params.ConditionExpression = '#a = :current';
-      params.ExpressionAttributeNames = {'#a' : 'age'};
+      params.ExpressionAttributeNames = {'#a' : 'a'};
       params.ExpressionAttributeValues = {':x' : 1, ':y' : 22, ':current' : 30};
 
       User.update({ id : '123456789'}, params, function (err, acc) {
@@ -428,13 +429,14 @@ describe('Vogels Integration Tests', function() {
     });
 
     it('should update Movie using updateExpressions', function (done) {
+      //TODO allow to use alias
       var params = {};
-      params.UpdateExpression = 'SET #year = #year + :inc, #dir.titles = list_append(#dir.titles, :title), #act[0].firstName = :firstName ADD tags :tag';
+      params.UpdateExpression = 'SET #year = #year + :inc, #dir.t = list_append(#dir.t, :title), #act[0].fn = :firstName ADD tg :tag';
       params.ConditionExpression = '#year = :current';
       params.ExpressionAttributeNames = {
-        '#year' : 'releaseYear',
-        '#dir' : 'director',
-        '#act' : 'actors'
+        '#year' : 'ry',
+        '#dir' : 'dir',
+        '#act' : 'act'
       };
 
       params.ExpressionAttributeValues = {
@@ -477,7 +479,7 @@ describe('Vogels Integration Tests', function() {
 
   });
 
-  /*describe('#getItems', function () {
+  describe('#getItems', function () {
     it('should return 3 items', function(done) {
       User.getItems(['userid-1', 'userid-2', 'userid-3'], function (err, accounts) {
         expect(err).to.not.exist;
@@ -627,8 +629,7 @@ describe('Vogels Integration Tests', function() {
 
   });
 
-
-  describe('#scan', function () {
+  /*describe('#scan', function () {
     it('should return all users', function(done) {
       User.scan().loadAll().exec(function (err, data) {
         expect(err).to.not.exist;
@@ -673,8 +674,7 @@ describe('Vogels Integration Tests', function() {
 
         _.each(data.Items, function (u) {
           expect(u.get('age')).to.be.within(18, 22);
-          expect(u.get('email')).to.match(/^test1.*/
-  /*);
+          expect(u.get('email')).to.match(/^test1.*//*);
           });
 
           return done();
@@ -722,8 +722,7 @@ describe('Vogels Integration Tests', function() {
 
           _.each(data.Items, function (u) {
             expect(u.get('age')).to.be.within(18, 22);
-            expect(u.get('email')).to.match(/^test1.*/
-  /*);
+            expect(u.get('email')).to.match(/^test1.*//*);
           });
 
           return done();
@@ -773,7 +772,7 @@ describe('Vogels Integration Tests', function() {
 
     });
 
-    describe('#parallelScan', function () {
+  /*describe('#parallelScan', function () {
       it('should return all users', function(done) {
         User.parallelScan(4).exec(function (err, data) {
           expect(err).to.not.exist;
@@ -816,56 +815,55 @@ describe('Vogels Integration Tests', function() {
 
     });
 
-
-    describe('timestamps', function () {
-      var Model;
-
-      before(function (done) {
-        Model = vogels.define('vogels-int-test-timestamp', {
-          hashKey : 'id',
-          timestamps : true,
-          schema : {
-            id : Joi.string()
-          }
-        });
-
-        return vogels.createTables(done);
-      });
-
-      it('should add createdAt param', function (done) {
-        Model.create({id : 'test-1'}, function (err) {
-          expect(err).to.not.exist;
-
-          Model.get('test-1', function (err2, data) {
-            expect(err2).to.not.exist;
-
-            expect(data.get('id')).to.eql('test-1');
-            expect(data.get('createdAt')).to.exist;
-
-            return done();
+  describe('timestamps', function () {
+        var Model;
+  
+        before(function (done) {
+          Model = vogels.define('vogels-int-test-timestamp', {
+            hashKey : 'id',
+            timestamps : true,
+            schema : {
+              id : Joi.string()
+            }
           });
-
+  
+          return vogels.createTables(done);
         });
-      });
-
-      it('should add updatedAt param', function (done) {
-        Model.update({id : 'test-2'}, function (err) {
-          expect(err).to.not.exist;
-
-          Model.get('test-2', function (err2, data) {
-            expect(err2).to.not.exist;
-
-            expect(data.get('id')).to.eql('test-2');
-            expect(data.get('updatedAt')).to.exist;
-
-            return done();
+  
+        it('should add createdAt param', function (done) {
+          Model.create({id : 'test-1'}, function (err) {
+            expect(err).to.not.exist;
+  
+            Model.get('test-1', function (err2, data) {
+              expect(err2).to.not.exist;
+  
+              expect(data.get('id')).to.eql('test-1');
+              expect(data.get('createdAt')).to.exist;
+  
+              return done();
+            });
+  
           });
-
+        });
+  
+        it('should add updatedAt param', function (done) {
+          Model.update({id : 'test-2'}, function (err) {
+            expect(err).to.not.exist;
+  
+            Model.get('test-2', function (err2, data) {
+              expect(err2).to.not.exist;
+  
+              expect(data.get('id')).to.eql('test-2');
+              expect(data.get('updatedAt')).to.exist;
+  
+              return done();
+            });
+  
+          });
         });
       });
-    });
 
-    describe('#destroy', function () {
+  describe('#destroy', function () {
       var userId;
       beforeEach(function (done) {
         User.create({email : 'destroy@test.com', age : 20, roles : ['tester']}, function (err, acc) {
@@ -908,8 +906,7 @@ describe('Vogels Integration Tests', function() {
       });
     });
 
-
-    describe('model methods', function () {
+  describe('model methods', function () {
 
       it('#save with passed in attributes', function (done) {
         var t = new Tweet({
