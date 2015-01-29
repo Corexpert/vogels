@@ -1,4 +1,4 @@
-# vogels [![Build Status](https://travis-ci.org/ryanfitz/vogels.png?branch=master)](https://travis-ci.org/ryanfitz/vogels)
+# vogels
 
 vogels is a [DynamoDB][5] data mapper for [node.js][1].
 
