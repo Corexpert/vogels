@@ -42,4 +42,4 @@ coverage: lint
 
 test: test-unit test-integration test-integration-alias
 
-.PHONY: test test-cov test-cov-html
+.PHONY: test test-cov test-cov-html coverage

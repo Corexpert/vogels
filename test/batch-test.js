@@ -10,6 +10,8 @@ var helper = require('./test-helper'),
     Joi    = require('joi'),
     _      = require('lodash');
 
+require('chai').should();
+
 describe('Batch', function () {
   var serializer,
       table;
@@ -96,12 +98,15 @@ describe('Batch', function () {
       };
 
       var expectedRequest = {
-        RequestItems : {
-          accounts : {
-            Keys : [
-              {email : key1.email, name : key1.name},
-              {email : key2.email, name : key2.name}
-            ]
+        RequestItems: {
+          accounts: {
+            Keys: [{
+              name: key1.name,
+              email: key1.email
+            }, {
+              name: key2.name,
+              email: key2.email
+            }]
           }
         }
       };

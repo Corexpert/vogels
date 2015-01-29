@@ -299,6 +299,18 @@ describe('Vogels Integration alias Tests', function() {
         return done();
       });
     });
+    
+    it('should create item with hash key and range key', function(done) {
+      Tweet.create({
+        UserId: '123456',
+        TweetID: 'f56a3d24-45d7-4dbf-88b3-7d4d1cb84ec8',
+      }, function(err, acc) {
+        expect(err).to.not.exist;
+        expect(acc).to.exist;
+        expect(acc.get()).to.have.keys(['PublishedDateTime','UserId', 'TweetID']);
+        return done();
+      });
+    });
 
     it('should return condition exception when using ConditionExpression', function(done) {
       var item = {
@@ -501,6 +513,65 @@ describe('Vogels Integration alias Tests', function() {
         return done();
       });
     });
+    
+    it('should return 2 items request with hash and range key', function(done) {
+      Tweet.getItems([{UserId : '123456',TweetID:'f56a3d24-45d7-4dbf-88b3-7d4d1cb84ec8'}], function (err, accounts) {
+        expect(err).to.not.exist;
+        expect(accounts).to.have.length(1);
+        _.each(accounts, function (acc) {
+          expect(acc.get()).to.have.keys(['PublishedDateTime', 'UserId', 'TweetID']);
+        });
+
+        return done();
+      });
+    });
+  });
+  
+  describe('#deleteItems', function() {
+    it('should delete 3 items', function(done) {
+      User.deleteItems(['userid-1', 'userid-2', 'userid-3'], function(err) {
+        expect(err).to.not.exist;
+        User.getItems(['userid-1', 'userid-2', 'userid-3'], function(err, accounts) {
+          expect(err).to.not.exist;
+          expect(accounts).to.have.length(0);
+          return done();
+        });
+      });
+    });
+  });
+  
+  describe('#putItems', function() {
+    it('should put 3 items', function(done) {
+      User.putItems([{
+        id: 'userid-1',
+        age: 10,
+        email : 'foo@foo.com',
+        roles : [
+          'user'
+          ]
+      }, {
+        id: 'userid-2',
+        age: 11,
+        email : 'userid-2@foo.com',
+        roles : [
+          'user'
+          ]
+      }, {
+        id: 'userid-3',
+        age: 12,
+        email : 'userid-3@foo.com',
+        roles : [
+          'user'
+          ]
+      }], function(err) {
+        expect(err).to.not.exist;
+        User.getItems(['userid-1', 'userid-2', 'userid-3'], function(err, accounts) {
+          expect(err).to.not.exist;
+          expect(accounts).to.have.length(3);
+          return done();
+        });
+      });
+    });
   });
 
   describe('#query', function () {
@@ -612,7 +683,7 @@ describe('Vogels Integration alias Tests', function() {
     });
 
     it('should return tweets with projection expression', function(done) {
-       //TODO allow using alias
+      //TODO allow using alias
       Tweet.query('userid-1')
       .projectionExpression('#con, uid')
       .expressionAttributeNames({ '#con' : 'c'})
@@ -682,7 +753,7 @@ describe('Vogels Integration alias Tests', function() {
         });
       });
 
-     it('should return users contains admin role', function(done) {
+    it('should return users contains admin role', function(done) {
         User.scan()
         .where('roles').contains('admin')
         .exec(function (err, data) {
@@ -731,17 +802,17 @@ describe('Vogels Integration alias Tests', function() {
         });
       });
 
-     it('should return users with projection expression', function(done) {
-       //TODO allow using alias
+    it('should return users with projection expression', function(done) {
+      //TODO allow using alias
         User.scan()
-        .projectionExpression('a, e, #roles')
+        .projectionExpression('i, a, e, #roles')
         .expressionAttributeNames({ '#roles' : 'r'})
         .exec(function (err, data) {
           expect(err).to.not.exist;
           expect(data.Items).to.have.length.above(0);
 
           _.each(data.Items, function (u) {
-            expect(u.get()).to.have.keys(['age', 'email', 'roles']);
+            expect(u.get()).to.have.keys(['age', 'email', 'id', 'roles']);
           });
 
           return done();
@@ -839,7 +910,7 @@ describe('Vogels Integration alias Tests', function() {
   
         it('should add createdAt param', function (done) {
           Model.create({id : 'test-1'}, function (err) {
-           expect(err).to.not.exist;
+          expect(err).to.not.exist;
   
             Model.get('test-1', function (err2, data) {
               expect(err2).to.not.exist;
