@@ -17,7 +17,13 @@ test-integration: lint
 	@node node_modules/.bin/mocha \
 		--reporter spec \
 		--ui bdd \
-		test/integration/*-test.js
+		test/integration/no_alias/*-test.js
+
+test-integration-alias: lint
+	@node node_modules/.bin/mocha \
+		--reporter spec \
+		--ui bdd \
+		test/integration/alias/*alias-test.js
 
 test-cov: lint
 	@node node_modules/.bin/mocha \
@@ -34,6 +40,6 @@ coverage: lint
 	@node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha $(TESTSRC)
 	@node_modules/.bin/istanbul check-coverage --statements 100 --functions 100 --branches 100 --lines 100
 
-test: test-unit test-integration
+test: test-unit test-integration test-integration-alias
 
 .PHONY: test test-cov test-cov-html

@@ -1,10 +1,10 @@
 'use strict';
 
-var vogels = require('../../index'),
+var vogels = require('../../../index'),
   chai = require('chai'),
   expect = chai.expect,
   _ = require('lodash'),
-  helper = require('../test-helper'),
+  helper = require('../../test-helper'),
   Joi = require('joi');
 
 chai.should();
