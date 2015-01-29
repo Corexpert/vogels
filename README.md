@@ -6,6 +6,7 @@ vogels is a [DynamoDB][5] data mapper for [node.js][1].
 * Simplified data modeling and mapping to DynamoDB types
 * Advanced chainable apis for [query](#query) and [scan](#scan) operations
 * Data validation
+* Use alias to minify attributes names (has importance in item size calcul)
 * [Autogenerating UUIDs](#uuid)
 * [Global Secondary Indexes](#global-indexes)
 * [Local Secondary Indexes](#local-secondary-indexes)
@@ -32,6 +33,8 @@ vogels.AWS.config.update({accessKeyId: 'AKID', secretAccessKey: 'SECRET'});
 
 ### Define a Model
 Models are defined through the toplevel define method.
+
+#### Without using alias
 
 ```js
 var Account = vogels.define('Account', {
@@ -64,6 +67,93 @@ var BlogPost = vogels.define('BlogPost', {
     title   : Joi.string(),
     content : Joi.binary(),
     tags   : vogels.types.stringSet(),
+  }
+});
+```
+
+#### With using alias
+
+```js
+var Account = vogels.define('Account', {
+  hashKey : 'email',
+
+  // add the timestamp attributes (updatedAt, createdAt)
+  timestamps : true,
+  //enable alias feature (false by default)
+  useAlias : true
+  schema : {
+    email   : {
+      name : 'e',
+      type : Joi.string().email()
+    },
+    name    : {
+      name : 'n',
+      type : Joi.string()
+    },
+    age     : {
+      name : 'a',
+      type : Joi.number()
+    },
+    roles   : {
+      name :'r',
+      type : vogels.types.stringSet()
+    },
+    settings: {
+      name: 's',
+      nickname: {
+        name: 'n',
+        type: Joi.string()
+      },
+      notify: {
+        name: 'no',
+        type: Joi.boolean().default(true)
+      },
+      version: {
+        name: 'v',
+        type: Joi.number()
+      }
+    },
+    friends: {
+      name: 'f',
+      type: Joi.array(),
+      include: {
+        firstName: {
+          name: 'fn',
+          type: Joi.string()
+        },
+        lastName: {
+          name: 'ln',
+          type: Joi.string()
+        }
+      }
+    }
+  }
+});
+```
+
+Models can also be defined with hash and range keys.
+
+```js
+var BlogPost = vogels.define('BlogPost', {
+  hashKey : 'email',
+  rangeKey : ‘title’,
+  schema : {
+    email   : {
+      name : 'e',
+      type : Joi.string().email()
+    },
+    title   : {
+      name : 't',
+      type : Joi.string()
+    },
+    content : {
+      name : 'c',
+      type : Joi.binary()
+    },
+    tags   : {
+      name : 'tg',
+      type : vogels.types.stringSet()
+    }
   }
 });
 ```
@@ -895,7 +985,7 @@ See the [examples][0] for more working sample code.
 
 ## TODO
 
-* Batch Write Items
+* Batch Write Items (putRequest and deleteRequest implemented separately)
 * Streaming api support for all operations
 
 ### License
