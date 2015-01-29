@@ -986,6 +986,7 @@ See the [examples][0] for more working sample code.
 ## TODO
 
 * Batch Write Items (putRequest and deleteRequest implemented separately)
+* Allow using alias in Expression and Attributes
 * Streaming api support for all operations
 
 ### License
