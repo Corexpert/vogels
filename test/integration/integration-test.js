@@ -481,7 +481,6 @@ describe('Vogels Integration Tests', function() {
 
   });
 
-
   describe('#scan', function () {
     it('should return all users', function(done) {
       User.scan().loadAll().exec(function (err, data) {
@@ -667,7 +666,6 @@ describe('Vogels Integration Tests', function() {
     });
 
   });
-
 
   describe('timestamps', function () {
     var Model;

@@ -101,7 +101,7 @@ internals.loadSeedData = function(callback) {
   ], callback);
 };
 
-describe('Vogels Integration Tests', function() {
+describe('Vogels Integration alias Tests', function() {
   this.timeout(0);
 
   before(function(done) {
@@ -252,7 +252,7 @@ describe('Vogels Integration Tests', function() {
       }
     });
 
-    DynamicKeyModel = vogels.define('vogels-int-test-dyn-key', {
+    DynamicKeyModel = vogels.define('vogels-int-test-dyn-alias-key', {
       hashKey: 'id',
       schema: Joi.object().keys({
         id: Joi.string()
@@ -590,12 +590,12 @@ describe('Vogels Integration Tests', function() {
       });
     });
 
-
     it('should return tweets that match expression filters', function(done) {
+      //TODO allow using alias
       Tweet.query('userid-1')
       .filterExpression('#num BETWEEN :low AND :high AND attribute_exists(#tag)')
       .expressionAttributeValues({ ':low' : 4, ':high' : 8})
-      .expressionAttributeNames({ '#num' : 'num', '#tag' : 'tag'})
+      .expressionAttributeNames({ '#num' : 'n', '#tag' : 't'})
       .exec(function (err, data) {
         expect(err).to.not.exist;
         expect(data.Items).to.have.length.above(0);
@@ -612,9 +612,10 @@ describe('Vogels Integration Tests', function() {
     });
 
     it('should return tweets with projection expression', function(done) {
+       //TODO allow using alias
       Tweet.query('userid-1')
-      .projectionExpression('#con, UserId')
-      .expressionAttributeNames({ '#con' : 'content'})
+      .projectionExpression('#con, uid')
+      .expressionAttributeNames({ '#con' : 'c'})
       .exec(function (err, data) {
         expect(err).to.not.exist;
         expect(data.Items).to.have.length.above(0);
@@ -629,7 +630,7 @@ describe('Vogels Integration Tests', function() {
 
   });
 
-  /*describe('#scan', function () {
+  describe('#scan', function () {
     it('should return all users', function(done) {
       User.scan().loadAll().exec(function (err, data) {
         expect(err).to.not.exist;
@@ -674,14 +675,14 @@ describe('Vogels Integration Tests', function() {
 
         _.each(data.Items, function (u) {
           expect(u.get('age')).to.be.within(18, 22);
-          expect(u.get('email')).to.match(/^test1.*//*);
+          expect(u.get('email')).to.match(/^test1.*/);
           });
 
           return done();
         });
       });
 
-      it('should return users contains admin role', function(done) {
+     it('should return users contains admin role', function(done) {
         User.scan()
         .where('roles').contains('admin')
         .exec(function (err, data) {
@@ -712,27 +713,29 @@ describe('Vogels Integration Tests', function() {
       });
 
       it('should return users that match expression filters', function(done) {
+        //TODO allow using alias
         User.scan()
         .filterExpression('#age BETWEEN :low AND :high AND begins_with(#email, :e)')
         .expressionAttributeValues({ ':low' : 18, ':high' : 22, ':e' : 'test1'})
-        .expressionAttributeNames({ '#age' : 'age', '#email' : 'email'})
+        .expressionAttributeNames({ '#age' : 'a', '#email' : 'e'})
         .exec(function (err, data) {
           expect(err).to.not.exist;
           expect(data.Items).to.have.length.above(0);
 
           _.each(data.Items, function (u) {
             expect(u.get('age')).to.be.within(18, 22);
-            expect(u.get('email')).to.match(/^test1.*//*);
+            expect(u.get('email')).to.match(/^test1.*/);
           });
 
           return done();
         });
       });
 
-      it('should return users with projection expression', function(done) {
+     it('should return users with projection expression', function(done) {
+       //TODO allow using alias
         User.scan()
-        .projectionExpression('age, email, #roles')
-        .expressionAttributeNames({ '#roles' : 'roles'})
+        .projectionExpression('a, e, #roles')
+        .expressionAttributeNames({ '#roles' : 'r'})
         .exec(function (err, data) {
           expect(err).to.not.exist;
           expect(data.Items).to.have.length.above(0);
@@ -772,7 +775,7 @@ describe('Vogels Integration Tests', function() {
 
     });
 
-  /*describe('#parallelScan', function () {
+  describe('#parallelScan', function () {
       it('should return all users', function(done) {
         User.parallelScan(4).exec(function (err, data) {
           expect(err).to.not.exist;
@@ -819,11 +822,15 @@ describe('Vogels Integration Tests', function() {
         var Model;
   
         before(function (done) {
-          Model = vogels.define('vogels-int-test-timestamp', {
+          Model = vogels.define('vogels-int-test-alias-timestamp', {
             hashKey : 'id',
             timestamps : true,
+            useAlias :true,
             schema : {
-              id : Joi.string()
+              id : {
+                name : 'i',
+                type : Joi.string()
+              }
             }
           });
   
@@ -832,7 +839,7 @@ describe('Vogels Integration Tests', function() {
   
         it('should add createdAt param', function (done) {
           Model.create({id : 'test-1'}, function (err) {
-            expect(err).to.not.exist;
+           expect(err).to.not.exist;
   
             Model.get('test-1', function (err2, data) {
               expect(err2).to.not.exist;
@@ -1002,6 +1009,6 @@ describe('Vogels Integration Tests', function() {
           return done();
         });
       });
-    });*/
+    });
 
 });
